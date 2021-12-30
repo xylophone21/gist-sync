@@ -2,27 +2,20 @@ import re
 import urllib.parse
 
 class MarkdownParser:
-    def __init__(self,file_path,user,token):
+    def __init__(self,file_path,token,user):
         self.user = user
         self.token = token
         self.file_path = file_path
-        self.isShare = False
-        self.url = ""
-        self.title = ""
-        self.imgs = []
-        self.gistId = ""
+        self.url = None
+        self.gistId = None
     
     def parse(self):
-        if self.isShare:
-            return True
-
         reUrl = re.compile(r'\[gist-sync-url\]:(.*)',re.I)
 
         with open(self.file_path, 'r') as f:
             for line in f:
                 urlMatch = reUrl.match(line)
                 if urlMatch:
-                    self.isShare = True
                     self.url = urlMatch.group(1)
                     urlret = urllib.parse.urlparse(self.url)
                     path = urlret.path
@@ -32,11 +25,13 @@ class MarkdownParser:
                     self.user = path.split('/')[-2]
                     break
 
-        return self.isShare
+        return self.gistId != None and self.user != None
 
     def syncTo(self, path):
-        if not self.isShare():
+        if not self.gistId or not self.user:
             return False
+
+        
         
         reTitle = re.compile(r'\s?#\s+(.*)')
         reImg = re.compile(r'!\[.*\]\((.*)\)')
@@ -51,7 +46,7 @@ class MarkdownParser:
                 if imgMatch:
                     imgStr = imgMatch.group(1)
                     imgPath = imgStr.split()[0]
-                    if not imgPath.startswith("http"):
-                        self.imgs.append(imgPath)
+                    # if not imgPath.startswith("http"):
+                    #     self.imgs.append(imgPath)
 
         

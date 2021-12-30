@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import click
 import os
+import sys
 import markdown
+import gitopt
+import shutil
 
 @click.group()
 @click.pass_context
@@ -19,23 +22,42 @@ def main(context):
     default=None,
     type=click.types.STRING,
     help='Default gist user.')
+@click.option(
+    '--workpath',
+    default="/tmp/gist-sync",
+    type=click.Path(file_okay=False, resolve_path=True),
+    help='Tmp folder to work.')
 @click.argument('token')
 @click.pass_context
-def build(context,root,token,user):
+def build(context,root,token,user,workpath):
     context.root = root
     context.token = token
     context.user = user
-    click.echo('build:' + str(context.root) + ':' + str(context.token) + ':' + str(context.user))
+    # click.echo('build:' + str(context.root) + ':' + str(context.token) + ':' + str(context.user))
+
+    if os.path.exists(workpath):
+        shutil.rmtree(workpath)
+    os.makedirs(workpath)
+
+    err = 0
 
     for parent,dirnames,filenames in os.walk(root):
         for filename in filenames:
             if filename.lower().endswith('.md'):
-                click.echo("generate for" + os.path.join(parent,filename))
-                parser = markdown.MarkdownParser(os.path.join(parent,filename), user, token)
-                parser.parse()
-                click.echo(":" + parser.url)
-                click.echo(":" + parser.gistId)
-                click.echo(":" + parser.user)
+                parser = markdown.MarkdownParser(os.path.join(parent,filename), token ,user)
+                ret = parser.parse()
+                if not ret:
+                    click.echo("Not share:" + os.path.join(parent,filename) )
+                    continue
+
+                gitopt.checkoutGist(workpath, parser.user, parser.token, parser.gistId)
+
+                ret = parser.syncTo(workpath)
+                if not ret:
+                    click.echo("syncTo")
+                    err = 1
+
+    sys.exit(err)
 
 if __name__ == '__main__':
     main()
