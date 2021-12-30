@@ -1,0 +1,41 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Test
+
+on: [push]
+jobs: 
+  sync-to-gist:
+    runs-on: ubuntu-latest
+
+    env:
+        GIST_SYNC_HOME: .
+        GIST_SYNC_TOKEN: abcdefg 
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+            submodules: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f ${{ env.GIST_SYNC_HOME }}/src/requirements.txt ]; then pip install -r ${{ env.GIST_SYNC_HOME }}/src/requirements.txt; fi
+
+      - name: Display Python version
+        run: python ${{ env.GIST_SYNC_HOME }}/src/gist-sync.py root=. token={{ env.GIST_SYNC_TOKEN }} build
