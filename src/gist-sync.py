@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import click
-from click.types import STRING
+import os
+import markdown
 
 @click.group()
 @click.pass_context
@@ -16,15 +17,25 @@ def main(context):
 @click.option(
     '--user',
     default=None,
-    type=STRING,
+    type=click.types.STRING,
     help='Default gist user.')
 @click.argument('token')
 @click.pass_context
 def build(context,root,token,user):
-    click.echo('build:' + str(context))
-    click.echo('build:' + str(root))
-    click.echo('build:' + str(token))
-    click.echo('build:' + str(user))
+    context.root = root
+    context.token = token
+    context.user = user
+    click.echo('build:' + str(context.root) + ':' + str(context.token) + ':' + str(context.user))
+
+    for parent,dirnames,filenames in os.walk(root):
+        for filename in filenames:
+            if filename.lower().endswith('.md'):
+                click.echo("generate for" + os.path.join(parent,filename))
+                parser = markdown.MarkdownParser(os.path.join(parent,filename), user, token)
+                parser.parse()
+                click.echo(":" + parser.url)
+                click.echo(":" + parser.gistId)
+                click.echo(":" + parser.user)
 
 if __name__ == '__main__':
     main()
