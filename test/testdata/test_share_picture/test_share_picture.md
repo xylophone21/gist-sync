@@ -1,5 +1,4 @@
-[gist-sync]:gist_id=gist_id_aaaa
-[gist-sync]:gist_user=gist_user_name
+[gist-sync-url]:https://gist.github.com/xylophone21/e8ba54145bc4817aef44
 
 # Test Shared Md with picture
 
