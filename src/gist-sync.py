@@ -31,11 +31,17 @@ def main(context):
     '--token',
     type=click.types.STRING,
     help="GitHub token.")
+@click.option(
+    '--exclude',
+    multiple=True,
+    type=click.Path(exists=True, file_okay=False, resolve_path=True),
+    help="Exclude path for search markdown files.")
 @click.pass_context
-def build(context,root,token,user,workpath):
+def build(context,root,token,user,workpath,exclude):
     context.root = root
     context.token = token
     context.user = user
+    context.exclude = exclude
     # click.echo('build:' + str(context.root) + ':' + str(context.token) + ':' + str(context.user))
 
     if os.path.exists(workpath):
@@ -44,9 +50,27 @@ def build(context,root,token,user,workpath):
 
     err = 0
 
-    for parent,dirnames,filenames in os.walk(root):
+    for parent,_,filenames in os.walk(root):
+
+        skip = False
+        for exc in context.exclude:
+            print("exclude:" + exc)
+            print("parent:" + parent)
+            if exc in parent:
+                print("exclude")
+                skip = True
+                break
+
+        if skip:
+            print("exclude1")
+            continue
+        
+        print("go")
+
         for filename in filenames:
             if filename.lower().endswith('.md'):
+                click.echo('Processing: ' + parent + "/" + filename)
+
                 parser = markdown.MarkdownParser(parent,filename, token ,user)
                 ret = parser.parse()
                 if not ret:

@@ -31,7 +31,7 @@ class MarkdownParser:
                     if path[-1] == '/':
                         path = path[:-1]
                     self.gistId = path.split('/')[-1]
-                    self.user = path.split('/')[-2]
+                    # self.user = path.split('/')[-2]
                     break
 
         return self.gistId != None and self.user != None
