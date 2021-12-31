@@ -54,18 +54,18 @@ def build(context,root,token,user,workpath,exclude):
 
         skip = False
         for exc in context.exclude:
-            print("exclude:" + exc)
-            print("parent:" + parent)
+            # print("exclude:" + exc)
+            # print("parent:" + parent)
             if exc in parent:
-                print("exclude")
+                # print("exclude")
                 skip = True
                 break
 
         if skip:
-            print("exclude1")
+            # print("exclude1")
             continue
         
-        print("go")
+        # print("go")
 
         for filename in filenames:
             if filename.lower().endswith('.md'):
