@@ -18,3 +18,6 @@ git submodule add git@github.com:xylophone21/gist-sync.git gist-sync
 ```
 [gist-sync-url]:https://gist.github.com/{your_account}/{gist_id}/
 ```
+
+## Note
+Do not add you token to your public repo. That's why actions failed in this repo.
