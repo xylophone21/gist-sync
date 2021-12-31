@@ -7,7 +7,7 @@
 2. Add this repo as submodule
 
 ```
-git submodule add git@github.com:xylophone21/gist-sync.git gist-sync
+git submodule add git@github.com:xylophone21/gist-sync.git .gist-sync
 ```
 3. Copy .github/workflows/test.yaml to your repo and change the envs
     - Generate a new GitHub Token https://github.com/settings/tokens here

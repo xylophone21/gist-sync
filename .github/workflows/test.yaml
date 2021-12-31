@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-        GIST_SYNC_HOME: .
-        GIST_SYNC_TOKEN: abcdefg
-        GIST_SYNC_USER: user1
+        GIST_SYNC_HOME: .gist-sync
+        GIST_SYNC_TOKEN: {your token}
+        GIST_SYNC_USER: {your account}
 
     steps:
       - name: Checkout
