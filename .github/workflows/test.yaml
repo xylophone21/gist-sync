@@ -39,4 +39,4 @@ jobs:
           pip install -r ${{ env.GIST_SYNC_HOME }}/src/requirements.txt
 
       - name: Run Build
-        run: python ${{ env.GIST_SYNC_HOME }}/src/gist-sync.py build token=${{ env.GIST_SYNC_TOKEN }} --root=. --user=${{ env.GIST_SYNC_USER }}
+        run: python ${{ env.GIST_SYNC_HOME }}/src/gist-sync.py build --token=${{ env.GIST_SYNC_TOKEN }} --user=${{ env.GIST_SYNC_USER }} --exclude ${{ env.GIST_SYNC_HOME }}
