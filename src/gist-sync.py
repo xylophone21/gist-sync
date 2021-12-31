@@ -27,7 +27,10 @@ def main(context):
     default="/tmp/gist-sync",
     type=click.Path(file_okay=False, resolve_path=True),
     help='Tmp folder to work.')
-@click.argument('token')
+@click.option(
+    '--token',
+    type=click.types.STRING,
+    help="GitHub token.")
 @click.pass_context
 def build(context,root,token,user,workpath):
     context.root = root
@@ -44,17 +47,21 @@ def build(context,root,token,user,workpath):
     for parent,dirnames,filenames in os.walk(root):
         for filename in filenames:
             if filename.lower().endswith('.md'):
-                parser = markdown.MarkdownParser(os.path.join(parent,filename), token ,user)
+                parser = markdown.MarkdownParser(parent,filename, token ,user)
                 ret = parser.parse()
                 if not ret:
                     click.echo("Not share:" + os.path.join(parent,filename) )
                     continue
 
-                gitopt.checkoutGist(workpath, parser.user, parser.token, parser.gistId)
-
-                ret = parser.syncTo(workpath)
-                if not ret:
-                    click.echo("syncTo")
+                gitRepo = gitopt.GistGit(workpath, parser.user, parser.token, parser.gistId)
+                retObj = parser.syncTo(gitRepo.workpath)
+                if retObj:
+                    # print(retObj.title)
+                    # print(retObj.files)
+                    gitRepo.commitAndPush()
+                    click.echo("Shared:" + os.path.join(parent,filename))
+                else:
+                    click.echo("Share error:" + os.path.join(parent,filename))
                     err = 1
 
     sys.exit(err)

@@ -4,7 +4,7 @@
 
 ![img_same_folder.png](./img_same_folder.png  "same folder")
 
-![img_under_folder.png](image/img_under_folder.png  "under folder")
+![img_under_folder.png](image/img_under_folder.png)
 
 ![img_up_folder.png](../img_up_folder.png  "under folder")
 
