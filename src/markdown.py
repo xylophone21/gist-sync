@@ -41,7 +41,7 @@ class MarkdownParser:
             return None
 
         reTitle = re.compile(r'\s?#\s+(.*)')
-        reImg = re.compile(r'!\[.*\]\((.*)\)')
+        reImg = re.compile(r'.*!\[.*\]\((.*)\)')
 
         retObj = MarkdownResult()
         retObj.files.append("index.md")
@@ -60,6 +60,7 @@ class MarkdownParser:
                         imgStr = imgMatch.group(1)
                         imgPath = imgStr.split()[0]
                         newFilename = self._convertImgFileName(imgPath)
+                        print("find img:", imgStr)
                         if newFilename is not None:
                             oldFile = os.path.join(self.parent, imgPath)
                             newFile = os.path.join(path, newFilename)
