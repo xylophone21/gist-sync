@@ -2,6 +2,13 @@ import re
 import os
 import shutil
 import urllib.parse
+from zlib import compress
+import base64
+import string
+
+plantuml_alphabet = string.digits + string.ascii_uppercase + string.ascii_lowercase + '-_'
+base64_alphabet   = string.ascii_uppercase + string.ascii_lowercase + string.digits + '+/'
+b64_to_plantuml = bytes.maketrans(base64_alphabet.encode('utf-8'), plantuml_alphabet.encode('utf-8'))
 
 class MarkdownResult:
     def __init__(self):
@@ -16,6 +23,13 @@ class MarkdownParser:
         self.filename = filename
         self.url = None
         self.gistId = None
+
+    def deflate_and_encode(plantuml_text):
+        """zlib compress the plantuml text and encode it for the plantuml server.
+        """
+        zlibbed_str = compress(plantuml_text.encode('utf-8'))
+        compressed_string = zlibbed_str[2:-4]
+        return base64.b64encode(compressed_string).translate(b64_to_plantuml).decode('utf-8')
     
     def parse(self):
         reUrl = re.compile(r'\[gist-sync-url\]:(.*)',re.I)
@@ -42,15 +56,37 @@ class MarkdownParser:
 
         reTitle = re.compile(r'\s?#\s+(.*)')
         reImg = re.compile(r'.*!\[.*\]\((.*)\)')
+        reCode = re.compile(r'(\s*)```(\w*)')
 
         retObj = MarkdownResult()
         retObj.files.append("index.md")
 
         mdPath = os.path.join(path, "index.md")
+        inCode = False
+        preSpace = ""
+        codeTxt = ""
         with open(mdPath, 'w') as mdf:
             file_path = os.path.join(self.parent, self.filename)
             with open(file_path, 'r') as f:
                 for line in f:
+                    codeMatch = reCode.match(line)
+                    if codeMatch:
+                        info = codeMatch.group(2)
+                        if not inCode and (info == "puml" or info == "plantuml"):
+                            inCode = True
+                            codeTxt = ""
+                            preSpace = codeMatch.group(1)
+                            line = ""
+                        elif inCode:
+                            inCode = False
+                            pumlCode = MarkdownParser.deflate_and_encode(codeTxt)
+                            codeTxt = ""
+                            line = f'\n{preSpace}![plantuml](https://plantuml.io/plantuml/png/{pumlCode})\n'
+                            
+                    if inCode:
+                        codeTxt += line
+                        continue
+
                     titleMatch = reTitle.match(line)
                     if titleMatch:
                         retObj.title = titleMatch.group(1)
