@@ -18,6 +18,9 @@ git submodule add git@github.com:xylophone21/gist-sync.git .gist-sync
 ```
 [gist-sync-url]:https://gist.github.com/{your_account}/{gist_id}/
 ```
+## features
+1. Sync some pages to gist
+2. plantuml diagram in markdown like Markdown Preview Enhanced
 
 ## Note
 Do not add you token to your public repo. That's why actions failed in this repo.
