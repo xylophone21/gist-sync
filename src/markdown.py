@@ -81,7 +81,7 @@ class MarkdownParser:
                             inCode = False
                             pumlCode = MarkdownParser.deflate_and_encode(codeTxt)
                             codeTxt = ""
-                            line = f'\n{preSpace}![plantuml](https://plantuml.io/plantuml/png/{pumlCode})\n'
+                            line = f'\n{preSpace}![plantuml](https://www.plantuml.com/plantuml/png/{pumlCode})\n'
                             
                     if inCode:
                         codeTxt += line
