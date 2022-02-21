@@ -8,7 +8,7 @@ class GistGit:
         self.repo = git.Repo.clone_from(self.url, to_path=self.workpath)
         self.repo.config_writer().set_value("user", "name", user).release()
         self.repo.config_writer().set_value("user", "email", user+"@unkonw").release()
-        self.repo.git.checkout('master')
+        self.repo.git.checkout()
 
     def commitAndPush(self, message="update"):
         if self.repo.is_dirty(untracked_files=True):
