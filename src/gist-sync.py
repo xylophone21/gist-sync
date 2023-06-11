@@ -36,12 +36,18 @@ def main(context):
     multiple=True,
     type=click.Path(exists=True, file_okay=False, resolve_path=True),
     help="Exclude path for search markdown files.")
+@click.option(
+    '--proxy',
+    default=None,
+    type=click.types.STRING,
+    help="HTTP proxy for git, like http://127.0.0.1:7890")
 @click.pass_context
-def build(context,root,token,user,workpath,exclude):
+def build(context,root,token,user,workpath,exclude,proxy):
     context.root = root
     context.token = token
     context.user = user
     context.exclude = exclude
+    context.proxy = proxy
     # click.echo('build:' + str(context.root) + ':' + str(context.token) + ':' + str(context.user))
 
     if os.path.exists(workpath):
@@ -77,7 +83,7 @@ def build(context,root,token,user,workpath,exclude):
                     click.echo("Not share:" + os.path.join(parent,filename) )
                     continue
 
-                gitRepo = gitopt.GistGit(workpath, parser.user, parser.token, parser.gistId)
+                gitRepo = gitopt.GistGit(workpath, parser.user, parser.token, parser.gistId,proxy=proxy)
                 retObj = parser.syncTo(gitRepo.workpath)
                 if retObj:
                     # print(retObj.title)
