@@ -1,0 +1,18 @@
+image: python:3.10-bullseye
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIST_SYNC_HOME: .gist-sync
+  GIST_SYNC_TOKEN: {your token}
+  GIST_SYNC_USER: {your account}
+
+stages:
+  - build
+
+build_gist:
+  stage: build
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install -r $CI_PROJECT_DIR/${GIST_SYNC_HOME}/src/requirements.txt
+  script:
+    - python $CI_PROJECT_DIR/${GIST_SYNC_HOME}/src/gist-sync.py build --token=${GIST_SYNC_TOKEN} --user=${GIST_SYNC_USER} --exclude ${GIST_SYNC_HOME}

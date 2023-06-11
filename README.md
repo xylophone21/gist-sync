@@ -1,15 +1,16 @@
 # gist-sync
-- Sync selected markdown files to gist in github.
-- Share part of pages to gist when you want to using github private repo as notes.
+- Share part of pages to gist when you want to using github/gitlab private repo as notebook.
+- Support images and plantuml in markdown, see test/*.md as examples.
+- Gitlab gets better experience as it supports plantuml images in the repo website
 
 ## How to setup
-1. Make a private Github repo for your note.
+1. Make a private Github/gitlab repo for your notebook.
 2. Add this repo as submodule
 
 ```
 git submodule add git@github.com:xylophone21/gist-sync.git .gist-sync
 ```
-3. Copy .github/workflows/test.yaml to your repo and change the envs
+3. Copy .github/workflows/test.yaml or .gitlab-ci.yml to your repo and change the envs
     - Generate a new GitHub Token https://github.com/settings/tokens here
 
 ## How to use
